@@ -1,4 +1,6 @@
+Projet de session réaliser par LUCAS SANTIAGO et THÉODORE LEFEBVRE
 # INF-349 – Application de commande en ligne (Première remise)
+
 
 ## 1. Installation rapide
 
@@ -110,6 +112,7 @@ curl -X PUT http://127.0.0.1:5000/order/1 \
 
 . Lancer les tests
 
-pytest -q
+PYTHONPATH=. pytest -s -v
+
 
 

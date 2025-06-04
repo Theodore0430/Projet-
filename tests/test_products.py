@@ -1,5 +1,4 @@
 def test_get_root_returns_products(client, monkeypatch):
-    # Fake le service distant :
     monkeypatch.setattr("inf349.product_service.requests.get",
                         lambda *_a, **_k: type("R",(object,),
                                                 {"json": lambda self: {"products":[{"id":1,"name":"X","description":"","price":100,"weight":100,"in_stock":True,"image":"0.jpg"}]},
