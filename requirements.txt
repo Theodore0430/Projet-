@@ -3,3 +3,7 @@ peewee>=3.17.0
 requests>=2.31.0
 pytest>=8.0.0
 pytest-flask>=1.3.0
+psycopg2-binary
+redis
+rq==1.15.1
+requests

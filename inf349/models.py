@@ -1,12 +1,12 @@
-from peewee import *
-from playhouse.sqlite_ext import SqliteExtDatabase
-from config import config
+# inf349/models.py
 
-db = SqliteExtDatabase(config.DATABASE)
+from peewee import *
+from .database import db  # ⬅️ nouvelle ligne
 
 class BaseModel(Model):
     class Meta:
         database = db
+
 class Product(BaseModel):
     id = IntegerField(primary_key=True)
     name = CharField()
@@ -15,6 +15,7 @@ class Product(BaseModel):
     weight = IntegerField()
     in_stock = BooleanField()
     image = CharField()
+
 class Order(BaseModel):
     email = CharField(null=True)
     country = CharField(null=True)
@@ -34,11 +35,12 @@ class Order(BaseModel):
     transaction_id = CharField(null=True)
     transaction_success = BooleanField(null=True)
     transaction_amount = IntegerField(null=True)
+
 class OrderLine(BaseModel):
     order = ForeignKeyField(Order, backref="lines", on_delete="CASCADE")
     product = ForeignKeyField(Product, backref="order_lines")
     quantity = IntegerField()
 
-
 def create_tables():
-    db.create_tables([Product, Order, OrderLine])
+    with db:
+        db.create_tables([Product, Order, OrderLine])

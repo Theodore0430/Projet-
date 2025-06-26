@@ -7,6 +7,7 @@ from config import config
 import click
 
 db = SqliteExtDatabase(config.DATABASE)
+
 class UTF8JSONProvider(DefaultJSONProvider):
     def dumps(self, obj, **kwargs):
         kwargs.setdefault("ensure_ascii", False)
@@ -18,11 +19,8 @@ class UTF8JSONProvider(DefaultJSONProvider):
 def create_app():
     app = Flask(__name__)
     
-
     app.config.from_object("config.config")
     app.json = UTF8JSONProvider(app)
-
-
 
     @app.before_request
     def _db_connect():
@@ -36,6 +34,7 @@ def create_app():
 
     from .routes import shop_bp
     app.register_blueprint(shop_bp)
+
     @app.errorhandler(404)
     def not_found(err):
         return jsonify({
@@ -46,6 +45,7 @@ def create_app():
                 }
             }
         }), 404
+
     @app.errorhandler(500)
     def internal_error(err):
         return jsonify({
@@ -57,10 +57,6 @@ def create_app():
             }
         }), 500
 
-
-
-
-
     @app.cli.command("init-db")
     def init_db():
         from .models import create_tables
@@ -68,6 +64,18 @@ def create_app():
         create_tables()
         fetch_and_cache_products()
         click.echo("Base initialisée et produits importés.")
+
+
+    @app.cli.command("worker")
+    def start_worker():
+        from rq import Connection, Worker
+        from .redis_client import redis_client
+
+        with Connection(redis_client):
+            worker = Worker(["default"])  # ← aucun serializer=...
+            worker.work()
+
+
 
     return app
 
